@@ -12,9 +12,14 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dylanfw/webmontage",
+    install_requires=[
+        'gitpython>=2',
+    ],
     packages=setuptools.find_packages(),
     entry_points={
-        'console_scripts': ['webmontage=webmontage.command:main'],
+        'console_scripts': [
+            'webmontage = webmontage.command:main'
+        ],
     },
     classifiers=[
         "Programming Language :: Python :: 3",
