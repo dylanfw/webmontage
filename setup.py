@@ -14,6 +14,7 @@ setuptools.setup(
     url="https://github.com/dylanfw/webmontage",
     install_requires=[
         'gitpython>=2',
+        'selenium',
     ],
     packages=setuptools.find_packages(),
     entry_points={

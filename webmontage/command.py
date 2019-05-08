@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 import time
 
@@ -8,11 +9,36 @@ from git.exc import (
     InvalidGitRepositoryError,
     NoSuchPathError,
 )
-
+from selenium import webdriver
 
 
 class WebMontageError(Exception):
     pass
+
+
+def get_browser():
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('headless')
+    return webdriver.Chrome('chromedriver', chrome_options=chrome_options)
+
+
+def get_git(path):
+    try:
+        repo = Repo(path)
+        client = repo.git
+    except (InvalidGitRepositoryError, NoSuchPathError) as e:
+        raise WebMontageError(f'No git repository found at {path}')
+    return client
+
+
+def get_history(git, filename):
+    try:
+        commits = git.log(filename, pretty='format:"%h"', follow=True)
+        commits = commits.replace('"', '').split('\n')
+        commits.reverse()
+    except GitCommandError as e:
+        raise WebMontageError(f'Error occurred finding commits. Make sure {self.path}/{filename} exists and has a commit history: > git log --pretty=format:"%h" --follow -- {filename}')
+    return commits
 
 
 def get_args():
@@ -25,24 +51,14 @@ def get_args():
 def main():
     args = get_args()
 
-    try:
-        repo = Repo(args.repo)
-        git = repo.git
-    except (InvalidGitRepositoryError, NoSuchPathError):
-        sys.stderr.write(f'No git repository found at: {args.repo}\n')
-        sys.exit(1)
-
+    git = get_git(args.repo)
     git.checkout('master')
-    try:
-        index_commits = git.log(args.index, pretty='format:"%h"', follow=True)
-    except GitCommandError:
-        sys.stderr.write(f'Error occurred finding commits. Make sure {args.repo}/{args.index} exists and has a commit history: > git log --pretty=format:"%h" --follow -- {args.index}\n')
-        sys.exit(1)
-
-    index_commits = index_commits.replace('"', '').split('\n')
-    index_commits.reverse()
-    for i, commit in enumerate(index_commits):
+    history = get_history(git, args.index)
+    browser = get_browser()
+    for i, commit in enumerate(history):
         git.checkout(commit)
-        # TODO Load page and take screenshot
+        browser.get(f'file:///{args.repo}/{args.index}')
+        screenshot = browser.save_screenshot(f'{i}.png')
+    browser.quit()
     git.checkout('master')
     # TODO Combine screenshots into timelapse video
