@@ -12,16 +12,9 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dylanfw/webmontage",
-    install_requires=[
-        'gitpython>=2',
-        'selenium',
-    ],
+    install_requires=["gitpython>=2", "selenium", "imutils", "opencv-python"],
     packages=setuptools.find_packages(),
-    entry_points={
-        'console_scripts': [
-            'webmontage = webmontage.command:main'
-        ],
-    },
+    entry_points={"console_scripts": ["webmontage = webmontage.command:main"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
