@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="webmontage",
-    version="0.0.1",
+    version="1.0.0",
     author="Dylan Williams",
     author_email="dylan@dylanfw.com",
     description="Web page montage generator",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/dylanfw/webmontage",
-    install_requires=["gitpython>=2", "selenium", "imutils", "opencv-python"],
+    install_requires=["gitpython>=2", "selenium", "opencv-python"],
     packages=setuptools.find_packages(),
     entry_points={"console_scripts": ["webmontage = webmontage.command:main"]},
     classifiers=[
